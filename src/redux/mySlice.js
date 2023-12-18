@@ -53,17 +53,11 @@ export const cartSlice = createSlice({
             state.cart[ind].c2 = ""
             state.cart[ind].c1 = "colg"
         },
-        IncreaseQuantity : (state,action) => {
-            let ind = state.cart.findIndex(x => x.id === action.payload);
-
-            if (state.cart[ind].quantity >= 0){
-                state.cart[ind].quantity += 1
-            }
-        }
+       
     }
 
 })
 
-export const {storeData,tickMark,CrossMarkNo,CrossMarkYes,missingProd,QuantitynotSame,priceUpdated,IncreaseQuantity} = cartSlice.actions
+export const {storeData,tickMark,CrossMarkNo,CrossMarkYes,missingProd,QuantitynotSame,priceUpdated} = cartSlice.actions
 
 export default cartSlice.reducer

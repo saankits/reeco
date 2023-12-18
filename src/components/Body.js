@@ -3,13 +3,13 @@ import "./body.css";
 import { useSelector, useDispatch } from "react-redux";
 import Table from "react-bootstrap/Table";
 import xyz from "../Assets/1.jpg";
-import { tickMark, CrossMarkYes, CrossMarkNo,missingProd,QuantitynotSame,priceUpdated,IncreaseQuantity } from "../redux/mySlice";
+import { tickMark, CrossMarkYes, CrossMarkNo,missingProd,QuantitynotSame,priceUpdated } from "../redux/mySlice";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 
 function Body() {
   const mydata = useSelector((state) => state.cartslice.cart);
-
+console.log(mydata[0])
   const dispatch = useDispatch();
 
   const handleTick = (id) => {
@@ -19,11 +19,7 @@ function Body() {
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [val, setVal] = useState();
-  // const [editData, setEditdata] = useState({
-  //   price:val !===undefined?mydata[val].price:0,
-  //   quantity:val !===undefined?mydata[val].quantity:0
-  // })  
-  // console.log(editData)
+  
 
   const handleCrossNo = (id) => {
     dispatch(CrossMarkNo(id));
@@ -37,20 +33,19 @@ function Body() {
   const handleClose = () => setShow(false);
   const handleEditClose = () => setEdit(false);
   const handleShow = (id) => {
-    setShow(true);
     setVal(id);
+    setShow(true);
   };
   console.log(mydata)
   const handleEdit = (id) => {
     setEdit(true);
     setVal(id)
+  
   };
   const handlemissing = (id) => {
     dispatch(missingProd(id))
   };
-  const IncreaseVal = () => {
-
-  }
+  
   return (
     <div className="body-container">
       <Modal
@@ -95,9 +90,9 @@ function Body() {
                     <img className="imgmodal"src={xyz} alt=""/>
                 </span>
                 <span className="editDetails">
-                    <span>Price($)<input type="number"  value={val !==undefined?mydata[val].price:"0"} onChange={()=>{}} /></span>
-                    <span>Quantity <button className="send-20">-</button><input type="number" value={val !==undefined?mydata[val].quantity:"0"}/><button className="send-20" onClick={(val)=>dispatch(IncreaseQuantity(val))}>+</button>   X 6 + 1LB</span>
-                    <span>Total :{val !== undefined?mydata[val].total:"0"}</span>
+                    <span>Price($)<input type="number"  value={val !==undefined?mydata[val-1].price:"0"} onChange={()=>{}} /></span>
+                    <span>Quantity <button className="send-20">-</button><input type="number" value={val !==undefined?mydata[val-1].quantity:"0"}/><button className="send-20" >+</button>   X 6 + 1LB</span>
+                    <span>Total :{val !== undefined?mydata[val-1].total:"0"}</span>
                 </span>
             </div>
             <div className="boot"style={{position:"relative",marginTop:"15px"}}>
@@ -110,7 +105,7 @@ function Body() {
                 <span onClick={()=>{}}>Other</span>
             </div>
             <div style={{display:"flex",justifyContent:"flex-end", marginRight:"20px",marginTop:"20px"}}>
-                <span className="m-buttons"><button className="cancel" onClick={()=>setEdit(false)}>Cancel</button><button className="send">Send</button></span>
+                <span className="m-buttons"><button className="cancel" onClick={()=>setEdit(false)}>Cancel</button><button className="send" onClick={handleEditClose}>Send</button></span>
             </div>
         </Modal.Body>
       </Modal>
@@ -185,9 +180,23 @@ function Body() {
                         <i
                           className={`fa-solid fa-xmark ${element.c2}`}
                         //   style={{ color: "red" }}
-                          onClick={() => handleShow(element.id)}
+                          onClick={() => {
+                            if(element.status === ""){
+                              handleShow(element.id)
+                            }
+                            else{
+                              handleClose()
+                            }
+                          }}
                         ></i>
-                        <span onClick={() => handleEdit(element.id)}>Edit</span>
+                        <span onClick={() =>{
+                          if(element.status === ""){
+                            handleEdit(element.id)
+                          }
+                          else{
+                            handleEditClose()
+                          }
+                        }}>Edit</span>
                       </span>
                     </td>
                   </tr>
