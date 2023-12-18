@@ -53,11 +53,25 @@ export const cartSlice = createSlice({
             state.cart[ind].c2 = ""
             state.cart[ind].c1 = "colg"
         },
+        QuantityIncrement : (state, action)=>{
+            let index = state.cart.findIndex(x=>x.id === action.payload);
+            state.cart[index].quantity += 1
+        },
+        Quantitydecrement : (state, action)=>{
+            let index = state.cart.findIndex(x=>x.id === action.payload);
+            if(state.cart[index].quantity>0) {state.cart[index].quantity -= 1}
+        },
+        PriceUpdate : (state,action) => {
+            let index = state.cart.findIndex(x=>x.id === action.payload);
+            state.cart[index].price += ""
+
+
+        }
        
     }
 
 })
 
-export const {storeData,tickMark,CrossMarkNo,CrossMarkYes,missingProd,QuantitynotSame,priceUpdated} = cartSlice.actions
+export const {storeData,tickMark,CrossMarkNo,CrossMarkYes,missingProd,QuantitynotSame,priceUpdated,QuantityIncrement,Quantitydecrement,PriceUpdate} = cartSlice.actions
 
 export default cartSlice.reducer

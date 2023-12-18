@@ -3,13 +3,23 @@ import "./body.css";
 import { useSelector, useDispatch } from "react-redux";
 import Table from "react-bootstrap/Table";
 import xyz from "../Assets/1.jpg";
-import { tickMark, CrossMarkYes, CrossMarkNo,missingProd,QuantitynotSame,priceUpdated } from "../redux/mySlice";
+import {
+  tickMark,
+  CrossMarkYes,
+  CrossMarkNo,
+  missingProd,
+  QuantitynotSame,
+  priceUpdated,
+  QuantityIncrement,
+  Quantitydecrement,
+  PriceUpdate
+} from "../redux/mySlice";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 
 function Body() {
   const mydata = useSelector((state) => state.cartslice.cart);
-console.log(mydata[0])
+  console.log(mydata[0]);
   const dispatch = useDispatch();
 
   const handleTick = (id) => {
@@ -19,7 +29,7 @@ console.log(mydata[0])
   const [show, setShow] = useState(false);
   const [edit, setEdit] = useState(false);
   const [val, setVal] = useState();
-  
+  const [totalamout, setTotalamount] = useState(0);
 
   const handleCrossNo = (id) => {
     dispatch(CrossMarkNo(id));
@@ -36,16 +46,28 @@ console.log(mydata[0])
     setVal(id);
     setShow(true);
   };
-  console.log(mydata)
+  console.log(mydata);
   const handleEdit = (id) => {
     setEdit(true);
-    setVal(id)
-  
+    setVal(id);
   };
   const handlemissing = (id) => {
-    dispatch(missingProd(id))
+    dispatch(missingProd(id));
   };
-  
+  const increment = () => {
+    dispatch(QuantityIncrement(val))
+    setTotalamount(val?mydata[val-1].price * mydata[val-1].quantity*10:0)
+  }
+  const decrement = () => {
+    dispatch(Quantitydecrement(val))
+    setTotalamount(val ? mydata[val-1].price * mydata[val-1].quantity *10 : 0)
+
+  }
+  const handlePriceChange = () => {
+    // dispatch(PriceUpdate(val))
+    
+  }
+
   return (
     <div className="body-container">
       <Modal
@@ -82,57 +104,112 @@ console.log(mydata[0])
         onHide={handleEditClose}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Chicken Breast Fillets, Boneless matuu maMarinated...</Modal.Title>
+          <Modal.Title>
+            Chicken Breast Fillets, Boneless matuu maMarinated...
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <div className="r22" style={{position:"relative"}}>
-                <span>
-                    <img className="imgmodal"src={xyz} alt=""/>
-                </span>
-                <span className="editDetails">
-                    <span>Price($)<input type="number"  value={val !==undefined?mydata[val-1].price:"0"} onChange={()=>{}} /></span>
-                    <span>Quantity <button className="send-20">-</button><input type="number" value={val !==undefined?mydata[val-1].quantity:"0"}/><button className="send-20" >+</button>   X 6 + 1LB</span>
-                    <span>Total :{val !== undefined?mydata[val-1].total:"0"}</span>
-                </span>
-            </div>
-            <div className="boot"style={{position:"relative",marginTop:"15px"}}>
-                <h3>Choose Reason</h3><span>(Optional)</span>
-            </div>
-            <div className="phase">
-                <span onClick={()=>handlemissing(val)}>Missing Product</span>
-                <span onClick={()=>dispatch(QuantitynotSame(val))}>Quantity is not the same</span>
-                <span onClick={()=>dispatch(priceUpdated(val))}>Price is not the same</span>
-                <span onClick={()=>{}}>Other</span>
-            </div>
-            <div style={{display:"flex",justifyContent:"flex-end", marginRight:"20px",marginTop:"20px"}}>
-                <span className="m-buttons"><button className="cancel" onClick={()=>setEdit(false)}>Cancel</button><button className="send" onClick={handleEditClose}>Send</button></span>
-            </div>
+          <div className="r22" style={{ position: "relative" }}>
+            <span>
+              <img className="imgmodal" src={xyz} alt="" />
+            </span>
+            <span className="editDetails">
+              <span>
+                Price($)
+                <input
+                  type="number"
+                  value={val !== undefined ? mydata[val - 1].price : "0"}
+                  onChange={(e) => handlePriceChange(e)}
+                />
+              </span>
+              <span>
+                Quantity <button className="send-20" onClick={(val)=>decrement(val)}>-</button>
+                <input
+                  type="number"
+                  value={val !== undefined ? mydata[val - 1].quantity : "0"}
+                />
+                <button className="send-20" onClick={(val)=>increment(val)}>+</button> X 6 + 1LB
+              </span>
+              <span>
+                Total :{totalamout}
+              </span>
+            </span>
+          </div>
+          <div
+            className="boot"
+            style={{ position: "relative", marginTop: "15px" }}
+          >
+            <h3>Choose Reason</h3>
+            <span>(Optional)</span>
+          </div>
+          <div className="phase">
+            <span onClick={() => handlemissing(val)}>Missing Product</span>
+            <span onClick={() => dispatch(QuantitynotSame(val))}>
+              Quantity is not the same
+            </span>
+            <span onClick={() => dispatch(priceUpdated(val))}>
+              Price is not the same
+            </span>
+            <span onClick={() => {}}>Other</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginRight: "20px",
+              marginTop: "20px",
+            }}
+          >
+            <span className="m-buttons">
+              <button className="cancel" onClick={() => setEdit(false)}>
+                Cancel
+              </button>
+              <button className="send" onClick={handleEditClose}>
+                Send
+              </button>
+            </span>
+          </div>
         </Modal.Body>
       </Modal>
 
       <div className="detail-card">
-      <Table  border="none" hover>
-      
-      <tbody>
-        <tr >
-          <td>Supplier</td>
-          <td>Shipping Date</td>
-          <td>Total</td>
-          <td>Category</td>
-          <td>Department</td>
-          <td>Status</td>
-        </tr>
-        <tr >
-          <td><b>East coast fruits & vegitables</b></td>
-          <td><b>Thu,Feb 10</b></td>
-          <td><b>$15028.3</b></td>
-          <td><b><i className="fa-solid fa-person"></i><i className="fa-solid fa-person-digging"></i>
-<i className="fa-solid fa-toilet"></i><i className="fa-solid fa-glass"></i></b></td>
-          <td><b>300-444-678</b></td>
-          <td><b>Awaiting Your Approval</b></td>
-        </tr>
-        </tbody></Table>
-        
+        <Table border="none" hover>
+          <tbody>
+            <tr>
+              <td>Supplier</td>
+              <td>Shipping Date</td>
+              <td>Total</td>
+              <td>Category</td>
+              <td>Department</td>
+              <td>Status</td>
+            </tr>
+            <tr>
+              <td>
+                <b>East coast fruits & vegitables</b>
+              </td>
+              <td>
+                <b>Thu,Feb 10</b>
+              </td>
+              <td>
+                <b>$15028.3</b>
+              </td>
+              <td>
+                <b>
+                  <i className="fa-solid fa-person"></i>
+                  <i className="fa-solid fa-person-digging"></i>
+                  <i className="fa-solid fa-toilet"></i>
+                  <i className="fa-solid fa-glass"></i>
+                </b>
+              </td>
+              <td>
+                <b>300-444-678</b>
+              </td>
+              <td>
+                <b>Awaiting Your Approval</b>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
       </div>
       <div className="data-card">
         <div className="searchdata">
@@ -170,7 +247,8 @@ console.log(mydata[0])
                     <td className="width100">{element.quantity} X6+1LB</td>
                     <td className="width100">${element.total}</td>
                     <td className="snt">
-                      <span className={`data ${element.class}`}>{element.status}
+                      <span className={`data ${element.class}`}>
+                        {element.status}
                       </span>
                       <span className="r1">
                         <i
@@ -179,24 +257,27 @@ console.log(mydata[0])
                         ></i>
                         <i
                           className={`fa-solid fa-xmark ${element.c2}`}
-                        //   style={{ color: "red" }}
+                          //   style={{ color: "red" }}
                           onClick={() => {
-                            if(element.status === ""){
-                              handleShow(element.id)
-                            }
-                            else{
-                              handleClose()
+                            if (element.status === "") {
+                              handleShow(element.id);
+                            } else {
+                              handleClose();
                             }
                           }}
                         ></i>
-                        <span onClick={() =>{
-                          if(element.status === ""){
-                            handleEdit(element.id)
-                          }
-                          else{
-                            handleEditClose()
-                          }
-                        }}>Edit</span>
+                        <span
+                          onClick={() => {
+                            if (element.status === "") {
+                              handleEdit(element.id);
+                              setVal(element.id)
+                            } else {
+                              handleEditClose();
+                            }
+                          }}
+                        >
+                          Edit
+                        </span>
                       </span>
                     </td>
                   </tr>
